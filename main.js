@@ -103,7 +103,7 @@ function livresdisponibles() {
   let dispoTrue = livres.filter(val => val.disponible)
 
   if(dispoTrue.length === 0) {
-    console.lo("Aucun livre disponible.")
+    console.log("Aucun livre disponible.")
     return;
   }
 
@@ -130,8 +130,8 @@ function RechercherParID() {
 // 4. Gestion des abonnés
 
 function Ajouteabonnes() {
-  console.log("///++ Rechercher par ID ++////");
-  let id = 1;
+  console.log("///++ Ajoute un abonne ++////");
+  let id = abonne.length >0 ? Math.max(...abonne.map(a => a.id)) + 1 : 1;
   let nom = prompt('Nome: ');
   let prenom = prompt('prenom: ');
   let email = prompt("Email: ");
@@ -140,7 +140,120 @@ function Ajouteabonnes() {
   console.log(`Abonee ${prenom} ${nom} ajouté avec succès!`)
 }
 
+function Afficherabonnes() {
+  console.log("///++ Afficher les abonnes ++////");
+  if(abonne.length === 0) {
+    console.log("❌ Aucune abonnee!");
+    return;
+  }
 
+  abonne.forEach(el =>  {
+    console.log(`[${el.id}] ${el.prenom} ${el.nom} - ${el.email}`)
+  })
+}
+
+// 5. Gestion des emprunts
+
+function enregistrerEmprunt() {
+  console.log("///++ Enregistrer un emprunt ++////");
+  let id_livre = prompt("ID du Livre: ");
+  let id_abonne = Number(prompt('ID d\'abonne:'));
+  
+  let livre = livres.find(val => val.id_livre === id_livre);
+  let abone = abonne.find(val => val.id === id_abonne);
+
+  if(!livre) {
+    console.log(" X Livre non trouve");
+    return;
+  }else if(!livre.disponible) {
+    console.log('X Livre n\'est pas disponible');
+    return;
+  }else if(!abone) {
+    console.log('X Abonne non trouve')
+  }
+
+  livre.disponible = false;
+
+  emprunts.push({
+    id_livre,
+    id_abonne,
+  });
+
+  console.log(`:> Empruent Enregistre : ${abone.prenom} ${abone.nom} a Emprunté "${livre.titre}"`)
+
+}
+
+function EnregistrerRetour() {
+  console.log("///++ Enregistrer un retour ++////");
+  let id_livre = prompt('ID du livre à retourner: ');
+
+  let find_livre = emprunts.find(val => val.id_livre === id_livre)
+  if(!find_livre) {
+    console.log(" X Aucun emprunt actif trouvé pour ce livre .");
+    return;
+  }
+
+  let livre = livres.find(val => val.id_livre === id_livre);
+  if(livre) {
+    livre.disponible = true;
+    console.log(`Livre ${livre.titre} retourne avec succes!`)
+  }
+}
+
+function AfficherLEA() {
+  console.log("///++ Afficher livres empruntés par abonné ++////");
+
+  let id_abonne = Number(prompt('ID de l\'abonné:'));
+
+  let find_abonne = abonne.find(val => val.id === id_abonne);
+  if(!find_abonne) {
+    console.log('X Abonné non trouvé.');
+    return;
+  }
+
+  console.log(`:: Livres Emprunte Par ${find_abonne.prenom} ${find_abonne.nom} ==> `)
+
+  let Find_abonne_emprunt = emprunts.filter(val => val.id_abonne === id_abonne);
+  if(Find_abonne_emprunt === 0) {
+    console.log("Aucun livre emprunté.");
+    return;
+  }
+
+  Find_abonne_emprunt.forEach(el => {
+    let liver = livres.find(val => val.id_livre === el.id_liver)
+    if(liver) {
+      console.log(`[${liver.titre}]`);
+    }
+    
+  })
+
+}
+
+//********************* Menu de Gestion des emprunts ********************** */
+
+function MenuGestionEmprunts() {
+  while(true){
+        console.log('\n--- GESTION DES EMPRUNTS ---');
+        console.log('1. Enregistrer un emprunt');
+        console.log('2. Enregistrer un retour');
+        console.log('3. Afficher livres empruntés par abonné');
+        console.log('4. Retour au menu principal');
+    let choix = prompt('Entre votre Choix: ');
+
+    switch(choix) {
+      case '1': enregistrerEmprunt()
+      break;
+            case '2': EnregistrerRetour()
+      break;
+            case '3': AfficherLEA()
+      break;
+            case '4': 
+            return;
+      break;
+      default : console.log('Option invalide.')
+    }
+  }
+}
 
 // ************** Operation sur Les Livres ************//
 
@@ -191,9 +304,18 @@ function MenuPranc() {
     break;
         case '3': MinuOperationLivers();
     break;
-        case '4': livresdisponibles();// Fix
+        case '4': 
+        console.log("///++ Gestion des abonnés ++////");
+        console.log("1. Ajouter un abonne");
+        console.log("2. Afficher les abonnes");
+        let choix = prompt("votre Choix: ");
+        if(choix === '1') {
+          Ajouteabonnes()
+        }else {
+          Afficherabonnes()
+        }// Fix
     break;
-        case '5': RechercherParID();// Fix
+        case '5': MenuGestionEmprunts();// Fix
     break;
         case '6': return;
     break;
