@@ -131,7 +131,7 @@ function RechercherParID() {
 
 function Ajouteabonnes() {
   console.log("///++ Ajoute un abonne ++////");
-  let id = abonne.length >0 ? Math.max(...abonne.map(a => a.id)) + 1 : 1;
+  let id = abonne.length + 1 //abonne.length >0 ? Math.max(...abonne.map(a => a.id)) + 1 : 1;
   let nom = prompt('Nome: ');
   let prenom = prompt('prenom: ');
   let email = prompt("Email: ");
@@ -203,7 +203,7 @@ function EnregistrerRetour() {
 function AfficherLEA() {
   console.log("///++ Afficher livres empruntés par abonné ++////");
 
-  let id_abonne = Number(prompt('ID de l\'abonné:'));
+  let id_abonne = parseInt(prompt('ID de l\'abonné:'));
 
   let find_abonne = abonne.find(val => val.id === id_abonne);
   if(!find_abonne) {
@@ -214,13 +214,15 @@ function AfficherLEA() {
   console.log(`:: Livres Emprunte Par ${find_abonne.prenom} ${find_abonne.nom} ==> `)
 
   let Find_abonne_emprunt = emprunts.filter(val => val.id_abonne === id_abonne);
-  if(Find_abonne_emprunt === 0) {
+  if(Find_abonne_emprunt.length === 0) {
     console.log("Aucun livre emprunté.");
     return;
   }
 
+  console.log(typeof Find_abonne_emprunt)
+
   Find_abonne_emprunt.forEach(el => {
-    let liver = livres.find(val => val.id_livre === el.id_liver)
+    let liver = livres.find(val => val.id_livre === el.id_livre)
     if(liver) {
       console.log(`[${liver.titre}]`);
     }
